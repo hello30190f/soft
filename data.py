@@ -1,8 +1,9 @@
 import csv
+from io import TextIOWrapper
 
 class data:
     
-    def __init__(self,blob) -> None:
+    def __init__(self,blob:TextIOWrapper) -> None:
         self.candidateList      = []
         self.voteList           = []  
           
@@ -11,7 +12,7 @@ class data:
         
         self.getData(blob)
             
-    def getData(self,blob):
+    def getData(self,blob:TextIOWrapper) -> None:
         reader = csv.reader(blob,delimiter=" ")
         
         counter = 0
@@ -47,11 +48,11 @@ class data:
             new = {"id":i + 1,"count":0,"exclude":False}
             self.candidateList.append(new)
         
-    def resetCandidateListCount(self):
+    def resetCandidateListCount(self) -> None:
         for aCandidate in self.candidateList:
             aCandidate["count"] = 0 
     
-    def showInfo(self):
+    def showInfo(self) -> None:
         print(self.voteList)
         print(self.candidateList)
         print(self.numberOfVote)

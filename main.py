@@ -14,7 +14,10 @@ if __name__ == "__main__":
 
 
     winner = process(datas)
-    print("The winner is " + str(winner["id"]))
+    if(winner != None):
+        print("The winner is " + str(winner["id"]))
+    else:
+        print("All candidates are excluded!")
     exit(0)
     
     

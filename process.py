@@ -1,38 +1,38 @@
 from data import data
 
-def findCandidate(data:data,id:int):
+def findCandidate(data:data,id:int) -> dict:
     for AcandidateInfo in data.candidateList:    
         if(AcandidateInfo["id"] == id):
             return AcandidateInfo
     
     return None
 
-def _findNoneExculde(data:data,vote):
+def _findNoneExculde(data:data,vote) -> int:
     for aCandidate in vote:
         info = findCandidate(data,aCandidate)
         if(not info["exclude"]): return aCandidate
     return None
 
-def countCaindidate(data:data,voteList):
+def countCaindidate(data:data,voteList) -> None:
     for aCandidateInfo in data.candidateList:
         for aCandidate in voteList:
             if(aCandidate == aCandidateInfo["id"]):
                 aCandidateInfo["count"] += 1
 
-def findWinner(data:data):
+def findWinner(data:data) -> dict:
     threshold = int(data.numberOfVote / 2) + 1
     for aCandidateInfo in data.candidateList:
         if(aCandidateInfo["count"] >= threshold and not aCandidateInfo["exclude"]):
             return aCandidateInfo
     return None
     
-def findExclude(data:data):
+def findExclude(data:data) -> None:
     minVote = data.candidateList[0]
     
     for aCandidateInfo in data.candidateList:
         if(minVote["count"] > aCandidateInfo["count"]):
             minVote = aCandidateInfo
-
+    
     minVote["exclude"] = True
 
 

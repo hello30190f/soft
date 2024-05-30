@@ -35,7 +35,10 @@ def findExclude(data:data) -> None:
     
     minVote["exclude"] = True
 
-
+def findAllCandidateExcluded(data:data):
+    for aCandidateInfo in data.candidateList:
+        if(not aCandidateInfo["exclude"]): False
+    return True
 
 def process(data:data) -> str:
     
@@ -49,10 +52,13 @@ def process(data:data) -> str:
 
         countCaindidate(data,voteList)
         winner = findWinner(data)
-        if(winner != None):
-            break
+        if(winner != None): break
         findExclude(data)
+    
         data.resetCandidateListCount()
+    
+        if(not findAllCandidateExcluded(data)):
+            return None
     
     return winner
                 

@@ -40,11 +40,6 @@ def findExclude(data:data) -> None:
 
     minVote["exclude"] = True
 
-# def findAllCandidateExcluded(data:data) -> bool:
-#     for aCandidateInfo in data.candidateList:
-#         if(not aCandidateInfo["exclude"]): False
-#     return True
-
 def process(data:data) -> str:
 
     winner = None

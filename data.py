@@ -52,6 +52,11 @@ class data:
         for aCandidate in self.candidateList:
             aCandidate["count"] = 0 
     
+    def findAllCandidateExcluded(self) -> bool:
+        for aCandidateInfo in self.candidateList:
+            if(not aCandidateInfo["exclude"]): False
+        return True
+    
     def showInfo(self) -> None:
         print(self.voteList)
         print(self.candidateList)

@@ -1,10 +1,10 @@
 from data import data
 
 def findCandidate(data:data,id:int) -> dict:
-    for AcandidateInfo in data.candidateList:    
+    for AcandidateInfo in data.candidateList:
         if(AcandidateInfo["id"] == id):
             return AcandidateInfo
-    
+
     return None
 
 def _findNoneExculde(data:data,vote) -> int:
@@ -25,28 +25,28 @@ def findWinner(data:data) -> dict:
         if(aCandidateInfo["count"] >= threshold and not aCandidateInfo["exclude"]):
             return aCandidateInfo
     return None
-    
+
 def findExclude(data:data) -> None:
     minVote = data.candidateList[0]
     
-    for aCandidateInfo in data.candidateList:
-        if(minVote["count"] > aCandidateInfo["count"]):
+    counter = 1
+    while(minVote["exclude"]):
+        minVote = data.candidateList[counter]
+        counter += 1
+
+    for aCandidateInfo in data.candidateList[counter:]:
+        if(minVote["count"] > aCandidateInfo["count"] and not aCandidateInfo["exclude"]):
             minVote = aCandidateInfo
-    
+
     minVote["exclude"] = True
 
-def findAllCandidateExcluded(data:data):
-    for aCandidateInfo in data.candidateList:
-        if(not aCandidateInfo["exclude"]): False
-    return True
-
 def process(data:data) -> str:
-    
+
     winner = None
-    
+
     while(1):
         voteList = []
-        
+
         for vote in data.voteList:
             voteList.append(_findNoneExculde(data,vote))
 
@@ -54,12 +54,11 @@ def process(data:data) -> str:
         winner = findWinner(data)
         if(winner != None): break
         findExclude(data)
-    
+
         data.resetCandidateListCount()
-    
-        if(not findAllCandidateExcluded(data)):
+
+        if(not data.findAllCandidateExcluded()):
             return None
-    
+
+
     return winner
-                
-        

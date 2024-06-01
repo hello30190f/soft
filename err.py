@@ -10,6 +10,10 @@ def errCehck(blob:TextIOWrapper):
     
     # check unwanted char is included
     
+    # check format correctness
+    
+    # check are there worng amount of data in vote date row
+    
     
     
     blob.seek(0)

@@ -36,6 +36,8 @@ def getWinner(root:tkinter.Tk):
 
 if __name__ == "__main__":
     initMainFunc()
+    
+    datas.showInfo()
 
     root = tkinter.Tk()
     root.title("result")

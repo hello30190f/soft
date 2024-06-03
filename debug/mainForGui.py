@@ -8,6 +8,7 @@ import tkinter
 import threading
 
 datas  = None
+winnerShown = False 
 
 def errorMessage(text:str) -> None:
     messagebox.askokcancel(title="error",message=text)
@@ -29,6 +30,9 @@ def initMainFunc():
 
 def getWinner(root:tkinter.Tk):
     global datas
+    global winnerShown
+    if(winnerShown): return
+    else: winnerShown = True
 
     def threadFunc(datas:data,root:tkinter.Tk):
         winner = process(datas)
@@ -40,7 +44,7 @@ def getWinner(root:tkinter.Tk):
     processThread = threading.Thread(target=threadFunc,args=(datas,root))
     processThread.start()
 
-interval = int(1.0 / 20 * 1000)
+interval = int(1.0 / 5 * 1000)
 
 def updatePanel(state:tkinter.LabelFrame,refList:list,datas:data):
     for ref,AcandidateInfo in zip(refList,datas.candidateList):
@@ -51,11 +55,14 @@ def updatePanel(state:tkinter.LabelFrame,refList:list,datas:data):
     state.after(interval,lambda :updatePanel(state,refList,datas))
 
 def candidateStatePanel(root:tkinter.Tk,datas:data) -> None:
-    scrollContainer = tkinter.Canvas(root)
-    scrollContainer.pack(padx=20,pady=20,side=tkinter.RIGHT)
+    mainFrame = tkinter.Frame(root)
+    mainFrame.pack()
+    
+    scrollContainer = tkinter.Canvas(mainFrame)
+    scrollContainer.grid(padx=20,pady=20,row=0,column=0)
 
-    scroll = tkinter.Scrollbar(root,command=scrollContainer.yview)
-    scroll.pack(fill=tkinter.Y)
+    scroll = tkinter.Scrollbar(mainFrame,command=scrollContainer.yview)
+    scroll.grid(row=0,column=1,sticky=tkinter.NS)
     scrollContainer.configure(yscrollcommand=scroll.set)
 
     state = tkinter.LabelFrame(scrollContainer,text="candidate state")
@@ -83,9 +90,13 @@ def candidateStatePanel(root:tkinter.Tk,datas:data) -> None:
         refList.append(ref)
 
     state.update_idletasks()
+    root.update_idletasks()
     scrollContainer.create_window(0,0,window=state,anchor="nw")
-    scrollContainer.config(scrollregion=(0,0,state.winfo_width(),state.winfo_height()))
-    scrollContainer.configure(width=state.winfo_width(),height=200)
+    scrollContainer.config(scrollregion=(0,0,state.winfo_reqwidth(),state.winfo_reqheight()))
+    if(state.winfo_reqheight() > 200):
+        scrollContainer.configure(width=state.winfo_reqwidth(),height=200)
+    else:
+        scrollContainer.configure(width=state.winfo_reqwidth(),height=state.winfo_reqheight())
 
     # need to be updated
     state.after(interval,lambda :updatePanel(state,refList,datas))

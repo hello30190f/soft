@@ -25,7 +25,11 @@ def createVote(candidate:int):
     return new
 
 
-def createData(voteStr,candidateStr,filepath):
+def createData(argList):
+    voteStr = argList[0]
+    candidateStr = argList[1]
+    filepath = argList[2]
+        
     try:
         vote = int(voteStr)
         candidate = int(candidateStr)
@@ -33,15 +37,11 @@ def createData(voteStr,candidateStr,filepath):
         messagebox.askyesno(title="error",message="please enter number")
         return
 
-    p = Pool(os.cpu_count())
-    # voteData = []
-    run = []
+    voteData = []
     for voteIndex in range(vote):
-        run.append(candidate)
-        # Avote = createVote(candidate)
-        # voteData.append(Avote)
-    voteData = p.map(createVote,run)
-
+        Avote = createVote(candidate)
+        voteData.append(Avote)
+    
     # file path
     # create file
     # write value with sparetor as space
@@ -58,11 +58,31 @@ def createData(voteStr,candidateStr,filepath):
             dataText += "\n"
             data.write(dataText)
 
-    messagebox.askyesno(title="finish",message="data is created at " + filepath)
-            
+
+def createMoreData(voteStr,candidateStr,directoryPath,amountStr):
+    try:
+        vote = int(voteStr)
+        candidate = int(candidateStr)
+        amount = int(amountStr)
+    except:
+        messagebox.askyesno(title="error",message="please enter number")
+        return
+
+    p = Pool(os.cpu_count())
+
+    argsList = []
+    for i in range(amount):
+        argList = [voteStr,candidateStr,directoryPath + "/" + str(i) + "_data.txt"]
+        argsList.append(argList)
+    p.map(createData,argsList)
+    print(argsList)
+    
+    messagebox.askyesno(title="finished",message="data creation is finished.")
+
 def refFile(entry:tkinter.Entry):
-    filepath = filedialog.asksaveasfilename(filetypes=(("data file","*.txt"),))
+    filepath = filedialog.askdirectory()
     entry.insert("0",filepath)
+
 
 if __name__ == "__main__":
     root = tkinter.Tk()
@@ -88,7 +108,7 @@ if __name__ == "__main__":
     fileInputDialog.pack(padx=20)
 
     create = tkinter.Button(root,text="start creation of data")
-    create.bind("<1>",lambda event:createData(vote.get(),candidate.get(),filePathInput.get()))
+    create.bind("<1>",lambda event:createMoreData(vote.get(),candidate.get(),filePathInput.get(),"10"))
     create.pack(padx=10,pady=10)
 
     root.mainloop()

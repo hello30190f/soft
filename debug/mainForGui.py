@@ -1,3 +1,4 @@
+import tkinter.scrolledtext
 from data import *
 from process import process
 from err import errCehck
@@ -50,8 +51,15 @@ def updatePanel(state:tkinter.LabelFrame,refList:list,datas:data):
     state.after(interval,lambda :updatePanel(state,refList,datas))
 
 def candidateStatePanel(root:tkinter.Tk,datas:data) -> None:
-    state = tkinter.LabelFrame(root,text="candidate state")
-    state.pack()
+    scrollContainer = tkinter.Canvas(root)
+    scrollContainer.pack(padx=20,pady=20,side=tkinter.RIGHT)
+
+    scroll = tkinter.Scrollbar(root,command=scrollContainer.yview)
+    scroll.pack(fill=tkinter.Y)
+    scrollContainer.configure(yscrollcommand=scroll.set)
+
+    state = tkinter.LabelFrame(scrollContainer,text="candidate state")
+    state.pack(padx=20,pady=20) 
 
     refList = []
     # add candidate
@@ -73,6 +81,12 @@ def candidateStatePanel(root:tkinter.Tk,datas:data) -> None:
         tkinter.Label(frame,textvariable=exclude).pack()
 
         refList.append(ref)
+
+    state.update_idletasks()
+    scrollContainer.create_window(0,0,window=state,anchor="nw")
+    scrollContainer.config(scrollregion=(0,0,state.winfo_width(),state.winfo_height()))
+    scrollContainer.configure(width=state.winfo_width(),height=200)
+
     # need to be updated
     state.after(interval,lambda :updatePanel(state,refList,datas))
 
@@ -84,13 +98,14 @@ if __name__ == "__main__":
 
     root = tkinter.Tk()
     root.title("result")
-    root.geometry("400x400")
+    # root.geometry("400x400")
 
-    candidateStatePanel(root,datas)
 
     start = tkinter.Button(root,text="start process")
     start.bind("<1>",lambda event:getWinner(root))
-    start.pack()
+    start.pack(padx=10,pady=10)
+
+    candidateStatePanel(root,datas)
 
     root.mainloop()
 

@@ -29,15 +29,10 @@ class data:
                 # do nothing
                 continue
 
-            if(row.__len__() == self.numberOfCandidate):
-                new = []
-                for i in range(self.numberOfCandidate):
-                    new.append(int(row[i]))
-                self.voteList.append(new)
-                  
-            else:
-                # rise error
-                pass
+            new = []
+            for i in range(self.numberOfCandidate):
+                new.append(int(row[i]))
+            self.voteList.append(new)
             
             if(counter == self.numberOfVote):
                 break

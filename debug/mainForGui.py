@@ -39,12 +39,6 @@ def getWinner(root:tkinter.Tk):
     processThread = threading.Thread(target=threadFunc,args=(datas,root))
     processThread.start()
 
-    # winner = process(datas)
-    # if(winner != None):
-    #     tkinter.Label(root,text="The winner is " + str(winner["id"])).pack()
-    # else:
-    #     tkinter.Label(root,text="All candidates are excluded!").pack()
-
 interval = int(1.0 / 20 * 1000)
 
 def updatePanel(state:tkinter.LabelFrame,refList:list,datas:data):

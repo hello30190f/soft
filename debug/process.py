@@ -52,18 +52,27 @@ def process(data:data) -> str:
 
         for vote in data.voteList:
             voteList.append(_findNoneExculde(data,vote))
+        print("find non excluded candidate")
 
+        # slow
         countCaindidate(data,voteList)
+        print("count candidate")
+
         winner = findWinner(data)
+        print("found winner")
+
         if(winner != None): break
         findExclude(data)
+        print("find to exclude")
 
         data.resetCandidateListCount()
+        print("reset vote counter of candidates")
 
         if(not data.findAllCandidateExcluded()):
             return None
+        print("check all candidates are excluded")
 
-        print(counter)
+        print("progress: " + str(counter) + "\n\n")
         counter += 1
 
     return winner
@@ -71,7 +80,7 @@ def process(data:data) -> str:
 
 def multiProcess(data:data) -> str:
     winner = None
-    
+
     # subporcess creater
     # not always the number of cpu is the appropriate amount of subprocess
     core = os.cpu_count()
@@ -80,26 +89,35 @@ def multiProcess(data:data) -> str:
     else:
         p = Pool(data.numberOfVote)
 
-
     counter = 0
     while(1):
 
+        # is multiprocess need in _findNoneExculde
         args = []
         for vote in data.voteList:
             args.append([data,vote])
         voteList = p.map(_findNoneExculdeMulti,args)
+        print("find non excluded candidate")
 
+        # slow
         countCaindidate(data,voteList)
+        print("count candidate")
+
         winner = findWinner(data)
+        print("found winner")
+
         if(winner != None): break
         findExclude(data)
+        print("find to exclude")
 
         data.resetCandidateListCount()
+        print("reset vote counter of candidates")
 
         if(not data.findAllCandidateExcluded()):
             return None
+        print("check all candidates are excluded")
 
-        print(counter)
+        print("progress: " + str(counter) + "\n\n")
         counter += 1
 
     return winner

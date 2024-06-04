@@ -111,13 +111,13 @@ if __name__ == "__main__":
     datas.showInfo()
 
     root = tkinter.Tk()
-    root.title("result")
+    root.title("Vote system")
 
     start = tkinter.Button(root,text="start process")
     start.bind("<1>",lambda event:getWinner(root))
     start.pack(padx=10,pady=10)
 
-    candidateStatePanel(root,datas)
+    # candidateStatePanel(root,datas)
 
     root.mainloop()
 

@@ -38,8 +38,6 @@ def createData(voteStr,candidateStr,filepath):
     run = []
     for voteIndex in range(vote):
         run.append(candidate)
-        # Avote = createVote(candidate)
-        # voteData.append(Avote)
     voteData = p.map(createVote,run)
 
     # file path

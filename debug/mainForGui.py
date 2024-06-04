@@ -47,6 +47,7 @@ def getWinner(root:tkinter.Tk):
 interval = int(1.0 / 5 * 1000)
 
 def updatePanel(state:tkinter.LabelFrame,refList:list,datas:data):
+    counter = 0
     for ref,AcandidateInfo in zip(refList,datas.candidateList):
         # code of first line for the debug purpose
         ref["id"].set("id: " + "%4d" % (AcandidateInfo["id"]))

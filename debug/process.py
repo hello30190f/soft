@@ -1,4 +1,7 @@
 from data import data
+from multiprocessing import Pool
+import os
+from multiProcess import _findNoneExculdeMulti
 
 def findCandidate(data:data,id:int) -> dict:
     for AcandidateInfo in data.candidateList:
@@ -43,12 +46,17 @@ def findExclude(data:data) -> None:
 def process(data:data) -> str:
 
     winner = None
+    p = Pool(os.cpu_count())
 
+    counter = 0
     while(1):
-        voteList = []
+        # voteList = []
 
+        args = []
         for vote in data.voteList:
-            voteList.append(_findNoneExculde(data,vote))
+            # voteList.append(_findNoneExculde(data,vote))
+            args.append([data,vote])
+        voteList = p.map(_findNoneExculdeMulti,args)
 
         countCaindidate(data,voteList)
         winner = findWinner(data)
@@ -59,6 +67,8 @@ def process(data:data) -> str:
 
         if(not data.findAllCandidateExcluded()):
             return None
-
+        
+        print(counter)
+        counter += 1
 
     return winner

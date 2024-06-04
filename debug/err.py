@@ -1,21 +1,38 @@
 from io import TextIOWrapper
 import string
+from multiprocessing import Pool
+import os
 # error check functions
 # return:
 # false -> no error found
 # true  -> error found
 
 def wordCheck(text:str) -> bool:
-    if("CANDIDATES" in text and
-       "VOTES" in text and
-       "=" in text): return False
+    if("CANDIDATES" in text[:30] and
+       "VOTES" in text[:30] and
+       "=" in text[:30]): return False
     return True
 
 def valueCheck(text:str) -> bool:
     if("-" in text): return True
     for Achar in "BFGHJKLMPQRUWXYZ" + string.ascii_lowercase:
-        print(Achar)
         if(Achar in text): return True
+    return False
+
+def valueCheckMulti(text:str) -> bool:
+    chars =  [Achar for Achar in "BFGHJKLMPQRUWXYZ-" + string.ascii_lowercase]
+    texts = [text for i in range(chars.__len__())]
+    args = zip(chars,texts)
+    p = Pool(os.cpu_count())
+    def check(args):
+        char = args[0]
+        text = args[1]
+        if char in text: return True
+        else: return False
+    res = p.map(check,args)
+    
+    for checkBool in res:
+        if(checkBool): return True
 
     return False
 

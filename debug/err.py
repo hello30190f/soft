@@ -13,28 +13,56 @@ def wordCheck(text:str) -> bool:
     return True
 
 def valueCheck(text:str) -> bool:
-    if("-" in text): return True
-    for Achar in "BFGHJKLMPQRUWXYZ" + string.ascii_lowercase:
+    for Achar in "BFGHJKLMPQRUWXYZ-" + string.ascii_lowercase:
         if(Achar in text): return True
     return False
 
-def valueCheckMulti(text:str) -> bool:
-    chars =  [Achar for Achar in "BFGHJKLMPQRUWXYZ-" + string.ascii_lowercase]
-    texts = [text for i in range(chars.__len__())]
-    args = zip(chars,texts)
-    p = Pool(os.cpu_count())
-    def check(args):
-        char = args[0]
-        text = args[1]
-        if char in text: return True
-        else: return False
-    res = p.map(check,args)
-    
-    for checkBool in res:
-        if(checkBool): return True
+def checkVoteData(text:str) -> bool:
+    lines = text.split("\n")
+
+    counter = 0
+    numberOfCandidate = 0
+    numberOfVote = 0
+    for line in lines:
+        element = line.split(" ")
+
+        if(counter == 0):
+            try:
+                numberOfCandidate = int(element[2])
+            except:
+                return True
+            counter += 1
+            continue
+
+        if(counter == 1):
+            try:
+                numberOfVote = int(element[2])
+            except:
+                return True
+            counter += 1
+            continue
+
+        if(counter == 2):
+            counter += 1
+            continue
+
+        votes = []
+        for i in range(numberOfCandidate):
+            try:
+                votes.append(int(element[i]))
+            except:
+                return True
+
+        checked = []
+        for aVote in votes:
+            for check in checked:
+                if(aVote == check): return True
+            checked.append(aVote)
+
+        if(counter == numberOfVote): break
+        counter += 1
 
     return False
-
 
 # each error check should be separeted into function
 # and then executed as multiprocess
@@ -49,7 +77,12 @@ def errCehck(blob:TextIOWrapper) -> bool:
         # check format correctness
     if(valueCheck(text)): return True
 
+    # check dupulicate data in vote data row
+    # check are there alphabets in vote data row
+    if(checkVoteData(text)): return True
+
     # check are there worng amount of data in vote date row
+
 
     blob.seek(0)
     return False

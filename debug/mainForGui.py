@@ -17,20 +17,20 @@ def errorMessage(text:str) -> None:
     messagebox.askokcancel(title="error",message=text)
 
 
-def initMainFunc(root:tkinter.Tk):
+def initMainFunc():
     global datas
     filePath = filedialog.askopenfilename()
     
-    errPanel = errCheckProgressPanel(root)
+    errPanel = errCheckProgressPanel()
     
     with open(filePath,"r") as blob:
         if(errCheckWithGui(blob,errPanel)):
             errorMessage("error ocurred while read the file data. Please check your data file is correct.")
             print("error ocurred while read the file data. Please check your data file is correct.")
             exit(0)
+        print("des")
         datas = data(blob)
 
-    errPanel.ProgressHide()
 
 
 def getWinner(root:tkinter.Tk):
@@ -51,8 +51,8 @@ def getWinner(root:tkinter.Tk):
 
 
 if __name__ == "__main__":
+    initMainFunc()
     root = tkinter.Tk()
-    initMainFunc(root)
 
     root.title("Vote system")
 
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     start.pack(padx=10,pady=10,side=tkinter.LEFT)
 
     end = tkinter.Button(commandList,text="exit")
-    end.bind("<1>",lambda event:root.quit())
+    end.bind("<1>",lambda event:root.destroy())
     end.pack(padx=10,pady=10)
 
     panel = progressPanel(root)

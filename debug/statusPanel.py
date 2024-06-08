@@ -5,12 +5,11 @@ import threading
 
 
 class errCheckProgressPanel:
-    def __init__(self,root) -> None:
-        self.root = root
+    def __init__(self) -> None:
         self.ProgressInit()
 
     def ProgressInit(self) -> None :
-        self.root = tkinter.Toplevel(self.root)
+        self.root = tkinter.Tk()
         self.root.title("error check status")
         self.root.geometry("400x400")
 
@@ -25,15 +24,16 @@ class errCheckProgressPanel:
         self.checkVoteDataBar = ttk.Progressbar(self.root,variable=self.progressStatus["checkVoteData"],maximum=100)
         self.checkVoteDataLabel = tkinter.Label(self.root,text="vote row check progress")
 
+
+
+
+    def ProgressShow(self) -> None :
         status = tkinter.LabelFrame(self.root,text="status")
         status.pack(padx=10,pady=10)
         tkinter.Label(status,textvariable=self.progressStatus["status"]).pack()
 
         self.progressBar.pack(fill=tkinter.X)
-
-
-    def ProgressShow(self) -> None :
-        self.root.mainloop()
+        threading.Thread(self.root.mainloop()).start()
 
     def ProgressHide(self) -> None :
         self.root.destroy()

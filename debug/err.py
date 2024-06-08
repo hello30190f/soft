@@ -111,5 +111,7 @@ def errCehck(blob:TextIOWrapper,panel:errCheckProgressPanel) -> bool:
 
     # check are there worng amount of data in vote date row
 
+
     blob.seek(0)
+    panel.root.destroy()
     return False

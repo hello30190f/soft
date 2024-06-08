@@ -26,8 +26,6 @@ import threading
 
 
 
-
-
 def updatePanel(state:tkinter.LabelFrame,refList:list,datas:data) -> None:
     interval = int(1.0 / 5 * 1000)
     for ref,AcandidateInfo in zip(refList,datas.candidateList):

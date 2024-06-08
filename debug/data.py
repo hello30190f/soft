@@ -1,6 +1,8 @@
 import csv
 from io import TextIOWrapper
 import asyncio
+import tkinter
+import threading
 
 class data:
 
@@ -11,19 +13,83 @@ class data:
         self.numberOfCandidate  = 0
         self.numberOfVote       = 0
 
-        self.getData(blob)
+        self.initProgressPanel()
+
+        threading.Thread(target=self.getData,args=(blob,)).start()
+        self.showProgress()
+
+    def initProgressPanel(self):
+        self.progressPanel = tkinter.Tk()
+        self.progressPanel.title("reading data...")
+        # self.progressPanel.geometry("400x400")
+        self.progressStatus = {
+            "readVote": tkinter.StringVar(self.progressPanel,"0"),
+            "currentData": tkinter.StringVar(self.progressPanel,""),
+            "numberOfCandidate": tkinter.StringVar(self.progressPanel,"wait"),
+            "numberOfVote": tkinter.StringVar(self.progressPanel,"wait"),
+            "status": tkinter.StringVar(self.progressPanel,"None")
+        }
+
+    def showProgress(self) -> None:
+        stauts = tkinter.Label(self.progressPanel,textvariable=self.progressStatus["status"]).pack()
+        #------
+        infoPanel = tkinter.LabelFrame(self.progressPanel,text="info")
+        infoPanel.pack(padx=50,pady=10,side=tkinter.RIGHT)
+
+        numberOfCandidate = tkinter.LabelFrame(infoPanel,text="number of candidate")
+        numberOfCandidate.pack(padx=10,pady=10)
+        tkinter.Label(numberOfCandidate,textvariable=self.progressStatus["numberOfCandidate"]).pack()
+
+        numberOfVote = tkinter.LabelFrame(infoPanel,text="number of vote")
+        numberOfVote.pack(padx=10,pady=10)
+        tkinter.Label(numberOfVote,textvariable=self.progressStatus["numberOfVote"]).pack()
+        #------
+
+
+        #------
+        progress = tkinter.LabelFrame(self.progressPanel,text="Progress")
+        progress.pack(padx=50,pady=10)
+
+        readVote = tkinter.LabelFrame(progress,text="number of read vote")
+        readVote.pack(padx=10,pady=10)
+        tkinter.Label(readVote,textvariable=self.progressStatus["readVote"]).pack()
+
+        currentData = tkinter.LabelFrame(progress,text="current read data")
+        currentData.pack(padx=10,pady=10)
+        tkinter.Label(currentData,textvariable=self.progressStatus["currentData"]).pack()
+        #------
+
+        self.progressPanel.mainloop()
+
+
+    def updateProgress(self,mode:str) -> None:
+        if(mode == "countVote"):
+            self.progressStatus["status"].set(mode)
+            self.progressStatus["readVote"].set(int(self.counter))
+            # self.progressStatus["currentData"].set(int(self.voteList[-1]))
+
+        if(mode == "initCandidate"):
+            self.progressStatus["status"].set(mode)
+
+        if(mode == "init"):
+            self.progressStatus["status"].set(mode)
+            self.progressStatus["numberOfVote"].set(int(self.numberOfVote))
+            self.progressStatus["numberOfCandidate"].set(int(self.numberOfCandidate))
+
 
     def getData(self,blob:TextIOWrapper) -> None:
         reader = csv.reader(blob,delimiter=" ")
 
-        counter = 0
+        self.counter = 0
         for index,row in enumerate(reader):
             if(index == 0):
                 self.numberOfCandidate = int(row[2])
+                self.updateProgress("init")
                 continue
 
             if(index == 1):
                 self.numberOfVote = int(row[2])
+                self.updateProgress("init")
                 continue
 
             if(index == 2):
@@ -35,14 +101,18 @@ class data:
                 new.append(int(row[i]))
             self.voteList.append(new)
 
-            if(counter == self.numberOfVote):
+            if(self.counter == self.numberOfVote):
                 break
 
-            counter += 1
+            self.updateProgress("countVote")
+            self.counter += 1
 
+        self.updateProgress("initCandidate")
         for i in range(self.numberOfCandidate):
             new = {"id":i + 1,"count":0,"exclude":False}
             self.candidateList.append(new)
+
+        self.progressPanel.destroy()
 
     def resetCandidateListCount(self) -> None:
         for aCandidate in self.candidateList:

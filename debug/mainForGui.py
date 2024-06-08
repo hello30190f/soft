@@ -54,6 +54,10 @@ if __name__ == "__main__":
     start.bind("<1>",lambda event:getWinner(root))
     start.pack(padx=10,pady=10)
 
+    end = tkinter.Button(root,text="exit")
+    end.bind("<1>",lambda event:root.quit())
+    end.pack(padx=10,pady=10)
+
     # candidateStatePanel(root,datas)
 
     root.mainloop()

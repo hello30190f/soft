@@ -4,10 +4,136 @@ import threading
 
 
 
+class errCheckProgressPanel:
+    def __init__(self,root) -> None:
+        self.root = root
+        self.ProgressInit()
+
+    def ProgressInit(self) -> None :
+        self.root = tkinter.Toplevel(self.root)
+        self.root.title("error check status")
+        self.root.geometry("400x400")
+
+        self.progressStatus = {
+            "status": tkinter.StringVar(self.root,"please wait..."),
+            "progress": tkinter.IntVar(self.root,0),
+            "checkVoteData":tkinter.IntVar(self.root,0)
+        }
+
+        self.progressBar = ttk.Progressbar(self.root,variable=self.progressStatus["progress"],maximum=100)
+        
+        self.checkVoteDataBar = ttk.Progressbar(self.root,variable=self.progressStatus["checkVoteData"],maximum=100)
+        self.checkVoteDataLabel = tkinter.Label(self.root,text="vote row check progress")
+
+        status = tkinter.LabelFrame(self.root,text="status")
+        status.pack(padx=10,pady=10)
+        tkinter.Label(status,textvariable=self.progressStatus["status"]).pack()
+
+        self.progressBar.pack(fill=tkinter.X)
 
 
+    def ProgressShow(self) -> None :
+        self.root.mainloop()
+
+    def ProgressHide(self) -> None :
+        self.root.destroy()
+
+    def showCheckVoteDataInfo(self) -> None:
+        self.checkVoteDataLabel.pack()
+        self.checkVoteDataBar.pack(fill=tkinter.X)
+
+    def hideCheckVoteDataInfo(self) -> None:
+        self.checkVoteDataLabel.forget()
+        self.checkVoteDataBar.forget()
+
+    def ProgressUpdate(self,mode:str,data:dict) -> None :
+        if(mode == "wordCheck"):
+            self.progressStatus["status"].set(mode)
+            self.progressStatus["progress"].set(data["progress"])
+
+        # ------
+        if(mode == "valueCheck"):
+            if(data["status"] == "start"):
+                self.progressStatus["status"].set(mode)
+                self.progressStatus["progress"].set(data["progress"])
+            
+            if(data["status"] == "onProcess"):
+                index = data["index"]
+                maxVal = data["max"]
+                progress = int(100 * (index / float(maxVal)))
+                self.progressStatus["progress"].set(progress)
+
+            if(data["status"] == "end"):
+                self.progressStatus["progress"].set(data["progress"])
+        # ------
+
+        if(mode == "checkVoteData"):
+            if(data["status"] == "start"):
+                self.progressStatus["status"].set(mode)
+                self.progressStatus["progress"].set(data["progress"])
+                self.showCheckVoteDataInfo()
+
+            if(data["status"] == "onProcessEntire"):
+                self.progressStatus["status"].set(mode + " " + str(data["counter"]) + "/" + str(data["numberOfVote"]))
+                counter = data["counter"]
+                numberOfVote = data["numberOfVote"]
+                progress = int(100 * ((counter - 2) / float(numberOfVote)))
+                self.progressStatus["progress"].set(progress)
+
+            if(data["status"] == "onProcessVoteRow"):
+                index = data["index"]
+                maxVal = data["numberOfCandidate"]
+                progress = int(100 * (index / float(maxVal)))
+                self.progressStatus["checkVoteData"].set(progress)
+
+            if(data["status"] == "end"):
+                self.progressStatus["status"].set(mode)
+                self.progressStatus["progress"].set(data["progress"])
+                self.hideCheckVoteDataInfo()
 
 
+class progressPanel:
+
+    def __init__(self,root:tkinter.Tk) -> None:
+        self.root = root
+        self.initProgress()
+
+    def initProgress(self) -> None:
+        self.processProgressPanel = tkinter.Toplevel(self.root)
+        self.processProgressPanel.title("process progess status")
+        self.processProgressPanel.geometry("400x400")
+
+        self.processStatus =  {
+            "status": tkinter.StringVar(self.processProgressPanel,"None"),
+            "progress": tkinter.IntVar(self.processProgressPanel,0),
+            "findNonExclude": 10,
+            "countCandidate": 20,
+            "foundWinner": 30,
+            "findToExclude": 40,
+            "resetVote": 50,
+            "checAllCandidate": 60,
+            "total": 60
+        }
+
+        self.progressBar = ttk.Progressbar(self.processProgressPanel,variable=self.processStatus["progress"],maximum=self.processStatus["total"])
+
+        #-----
+        frameRow1 = tkinter.Frame(self.processProgressPanel)
+        frameRow1.pack(padx=10,pady=10)
+
+        self.status = tkinter.LabelFrame(frameRow1,text="status")
+        self.status.pack()
+        tkinter.Label(self.status,textvariable=self.processStatus["status"]).pack()
+        #-----
+        self.progressBar.pack()
+
+
+    def updateProgress(self,mode:str) -> None:
+        self.processStatus["progress"].set(self.processStatus[mode])
+        self.processStatus["status"].set(mode)
+
+    def showPanel(self) -> None:
+        self.processProgressPanel.mainloop()
 
 
 

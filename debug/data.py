@@ -35,7 +35,7 @@ class data:
             "initStep"              :10,
             "countVoteStepLength"   :50,
             "initCandidateLength"   :40,
-            "prevStep"              :0,
+            "prevStep"              :tkinter.IntVar(self.progressPanel,0),
             "step"                  :tkinter.IntVar(self.progressPanel,0)
         }
         self.progressBar = ttk.Progressbar(self.progressPanel,maximum=100,variable=self.progressBarState["step"])
@@ -107,7 +107,7 @@ class data:
         if(mode == "countVote"):
             progress = self.progressBarState["initStep"] + self.progressBarState["countVoteStepLength"] * float(self.counter) / self.numberOfVote
             self.progressBarState["step"].set(int(progress))
-            self.progressBarState["prevStep"] = self.progressBarState["step"]
+            self.progressBarState["prevStep"].set(self.progressBarState["step"].get())
             return
 
         if(mode == "initCandidate"):
@@ -149,6 +149,7 @@ class data:
 
             self.counter += 1
             self.updateProgress("countVote")
+
 
         self.candidateIndex = 0
         self.updateProgress("initCandidate")

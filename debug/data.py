@@ -31,7 +31,7 @@ class data:
         }
 
     def showProgress(self) -> None:
-        stauts = tkinter.Label(self.progressPanel,textvariable=self.progressStatus["status"]).pack()
+        tkinter.Label(self.progressPanel,textvariable=self.progressStatus["status"]).pack()
         #------
         infoPanel = tkinter.LabelFrame(self.progressPanel,text="info")
         infoPanel.pack(padx=50,pady=10,side=tkinter.RIGHT)
@@ -65,16 +65,22 @@ class data:
     def updateProgress(self,mode:str) -> None:
         if(mode == "countVote"):
             self.progressStatus["status"].set(mode)
-            self.progressStatus["readVote"].set(int(self.counter))
-            # self.progressStatus["currentData"].set(int(self.voteList[-1]))
+            self.progressStatus["readVote"].set(str(self.counter))
+            currentData = ""
+            for index,vote in enumerate(self.voteList[-1]):
+                if(index == 6):
+                    currentData += "..."
+                    break
+                currentData += str(vote) + ","
+            self.progressStatus["currentData"].set(currentData)
 
         if(mode == "initCandidate"):
             self.progressStatus["status"].set(mode)
 
         if(mode == "init"):
             self.progressStatus["status"].set(mode)
-            self.progressStatus["numberOfVote"].set(int(self.numberOfVote))
-            self.progressStatus["numberOfCandidate"].set(int(self.numberOfCandidate))
+            self.progressStatus["numberOfVote"].set(str(self.numberOfVote))
+            self.progressStatus["numberOfCandidate"].set(str(self.numberOfCandidate))
 
 
     def getData(self,blob:TextIOWrapper) -> None:

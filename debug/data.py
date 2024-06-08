@@ -3,6 +3,7 @@ from io import TextIOWrapper
 import asyncio
 import tkinter
 import threading
+from tkinter import ttk
 
 class data:
 
@@ -21,19 +22,31 @@ class data:
     def initProgressPanel(self):
         self.progressPanel = tkinter.Tk()
         self.progressPanel.title("reading data...")
-        # self.progressPanel.geometry("400x400")
+
         self.progressStatus = {
-            "readVote": tkinter.StringVar(self.progressPanel,"0"),
-            "currentData": tkinter.StringVar(self.progressPanel,""),
-            "numberOfCandidate": tkinter.StringVar(self.progressPanel,"wait"),
-            "numberOfVote": tkinter.StringVar(self.progressPanel,"wait"),
-            "status": tkinter.StringVar(self.progressPanel,"None")
+            "readVote"          : tkinter.StringVar(self.progressPanel,"0"),
+            "currentData"       : tkinter.StringVar(self.progressPanel,""),
+            "numberOfCandidate" : tkinter.StringVar(self.progressPanel,"wait"),
+            "numberOfVote"      : tkinter.StringVar(self.progressPanel,"wait"),
+            "status"            : tkinter.StringVar(self.progressPanel,"None")
         }
+
+        self.progressBarState = {
+            "initStep"              :10,
+            "countVoteStepLength"   :50,
+            "initCandidateLength"   :40,
+            "prevStep"              :0,
+            "step"                  :tkinter.IntVar(self.progressPanel,0)
+        }
+        self.progressBar = ttk.Progressbar(self.progressPanel,maximum=100,variable=self.progressBarState["step"])
 
     def showProgress(self) -> None:
         tkinter.Label(self.progressPanel,textvariable=self.progressStatus["status"]).pack()
+        frame = tkinter.Frame(self.progressPanel)
+        frame.pack()
+
         #------
-        infoPanel = tkinter.LabelFrame(self.progressPanel,text="info")
+        infoPanel = tkinter.LabelFrame(frame,text="info")
         infoPanel.pack(padx=50,pady=10,side=tkinter.RIGHT)
 
         numberOfCandidate = tkinter.LabelFrame(infoPanel,text="number of candidate")
@@ -47,7 +60,7 @@ class data:
 
 
         #------
-        progress = tkinter.LabelFrame(self.progressPanel,text="Progress")
+        progress = tkinter.LabelFrame(frame,text="Progress")
         progress.pack(padx=50,pady=10)
 
         readVote = tkinter.LabelFrame(progress,text="number of read vote")
@@ -59,10 +72,14 @@ class data:
         tkinter.Label(currentData,textvariable=self.progressStatus["currentData"]).pack()
         #------
 
+        self.progressBar.pack(fill=tkinter.X)
         self.progressPanel.mainloop()
 
 
     def updateProgress(self,mode:str) -> None:
+
+        self.updateProgressBar(mode)
+
         if(mode == "countVote"):
             self.progressStatus["status"].set(mode)
             self.progressStatus["readVote"].set(str(self.counter))
@@ -73,14 +90,34 @@ class data:
                     break
                 currentData += str(vote) + ","
             self.progressStatus["currentData"].set(currentData)
+            return
 
         if(mode == "initCandidate"):
             self.progressStatus["status"].set(mode)
+            return
 
         if(mode == "init"):
             self.progressStatus["status"].set(mode)
             self.progressStatus["numberOfVote"].set(str(self.numberOfVote))
             self.progressStatus["numberOfCandidate"].set(str(self.numberOfCandidate))
+            return
+
+
+    def updateProgressBar(self,mode):
+        if(mode == "countVote"):
+            progress = self.progressBarState["initStep"] + self.progressBarState["countVoteStepLength"] * float(self.counter) / self.numberOfVote
+            self.progressBarState["step"].set(int(progress))
+            self.progressBarState["prevStep"] = self.progressBarState["step"]
+            return
+
+        if(mode == "initCandidate"):
+            progress = self.progressBarState["initStep"] + self.progressBarState["prevStep"].get() + (self.progressBarState["countVoteStepLength"] * float(self.candidateIndex) / self.numberOfCandidate)
+            self.progressBarState["step"].set(int(progress))
+            return
+
+        if(mode == "init"):
+            self.progressBarState["step"].set(int(self.progressBarState["initStep"]))
+            return
 
 
     def getData(self,blob:TextIOWrapper) -> None:
@@ -110,11 +147,14 @@ class data:
             if(self.counter == self.numberOfVote):
                 break
 
-            self.updateProgress("countVote")
             self.counter += 1
+            self.updateProgress("countVote")
 
+        self.candidateIndex = 0
         self.updateProgress("initCandidate")
         for i in range(self.numberOfCandidate):
+            self.candidateIndex = i
+            self.updateProgress("initCandidate")
             new = {"id":i + 1,"count":0,"exclude":False}
             self.candidateList.append(new)
 

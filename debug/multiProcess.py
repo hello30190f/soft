@@ -4,7 +4,6 @@ def findCandidate(data:data,id:int) -> dict:
     for AcandidateInfo in data.candidateList:
         if(AcandidateInfo["id"] == id):
             return AcandidateInfo
-
     return None
 
 def _findNoneExculdeMulti(args) -> int:

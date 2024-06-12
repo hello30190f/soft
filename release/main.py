@@ -12,8 +12,8 @@ if __name__ == "__main__":
             exit(0)        
         datas  = data(blob)
 
-
     winner = process(datas)
+
     if(winner != None):
         print("The winner is " + str(winner["id"]))
     else:

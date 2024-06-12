@@ -1,4 +1,7 @@
 from data import data
+from multiprocessing import Pool
+import os
+from multiProcess import _findNoneExculdeMulti
 
 def findCandidate(data:data,id:int) -> dict:
     for AcandidateInfo in data.candidateList:
@@ -28,7 +31,7 @@ def findWinner(data:data) -> dict:
 
 def findExclude(data:data) -> None:
     minVote = data.candidateList[0]
-    
+
     counter = 1
     while(minVote["exclude"]):
         minVote = data.candidateList[counter]
@@ -41,9 +44,9 @@ def findExclude(data:data) -> None:
     minVote["exclude"] = True
 
 def process(data:data) -> str:
-
     winner = None
 
+    counter = 0
     while(1):
         voteList = []
 
@@ -60,5 +63,43 @@ def process(data:data) -> str:
         if(not data.findAllCandidateExcluded()):
             return None
 
+        print(counter)
+        counter += 1
+
+    return winner
+
+
+def multiProcess(data:data) -> str:
+    winner = None
+    
+    # subporcess creater
+    # not always the number of cpu is the appropriate amount of subprocess
+    core = os.cpu_count()
+    if(data.numberOfVote >= core):
+        p = Pool(os.cpu_count())
+    else:
+        p = Pool(data.numberOfVote)
+
+
+    counter = 0
+    while(1):
+
+        args = []
+        for vote in data.voteList:
+            args.append([data,vote])
+        voteList = p.map(_findNoneExculdeMulti,args)
+
+        countCaindidate(data,voteList)
+        winner = findWinner(data)
+        if(winner != None): break
+        findExclude(data)
+
+        data.resetCandidateListCount()
+
+        if(not data.findAllCandidateExcluded()):
+            return None
+
+        print(counter)
+        counter += 1
 
     return winner

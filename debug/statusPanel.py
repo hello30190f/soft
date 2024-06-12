@@ -25,8 +25,6 @@ class errCheckProgressPanel:
         self.checkVoteDataLabel = tkinter.Label(self.root,text="vote row check progress")
 
 
-
-
     def ProgressShow(self) -> None :
         status = tkinter.LabelFrame(self.root,text="status")
         status.pack(padx=10,pady=10)
@@ -100,8 +98,6 @@ class progressPanel:
 
     def initProgress(self) -> None:
         self.processProgressPanel = tkinter.LabelFrame(self.root,text="process progress status")
-        # self.processProgressPanel.title("process progess status")
-        # self.processProgressPanel.geometry("400x400")
 
         self.processStatus =  {
             "status": tkinter.StringVar(self.processProgressPanel,"None"),

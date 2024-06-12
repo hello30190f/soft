@@ -1,9 +1,5 @@
 from io import TextIOWrapper
 import string
-from multiprocessing import Pool
-import os
-import tkinter
-from tkinter import ttk
 from statusPanel import errCheckProgressPanel
 import threading
 

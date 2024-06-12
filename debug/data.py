@@ -1,6 +1,5 @@
 import csv
 from io import TextIOWrapper
-import asyncio
 import tkinter
 import threading
 from tkinter import ttk

@@ -11,7 +11,7 @@ class errCheckProgressPanel:
     def ProgressInit(self) -> None :
         self.root = tkinter.Tk()
         self.root.title("error check status")
-        self.root.geometry("400x400")
+        self.root.geometry("400x200")
 
         self.progressStatus = {
             "status": tkinter.StringVar(self.root,"please wait..."),
@@ -99,9 +99,9 @@ class progressPanel:
         self.initProgress()
 
     def initProgress(self) -> None:
-        self.processProgressPanel = tkinter.Toplevel(self.root)
-        self.processProgressPanel.title("process progess status")
-        self.processProgressPanel.geometry("400x400")
+        self.processProgressPanel = tkinter.LabelFrame(self.root,text="process progress status")
+        # self.processProgressPanel.title("process progess status")
+        # self.processProgressPanel.geometry("400x400")
 
         self.processStatus =  {
             "status": tkinter.StringVar(self.processProgressPanel,"None"),
@@ -125,7 +125,7 @@ class progressPanel:
         self.status.pack()
         tkinter.Label(self.status,textvariable=self.processStatus["status"]).pack()
         #-----
-        self.progressBar.pack()
+        self.progressBar.pack(fill=tkinter.X)
 
 
     def updateProgress(self,mode:str) -> None:
@@ -133,7 +133,7 @@ class progressPanel:
         self.processStatus["status"].set(mode)
 
     def showPanel(self) -> None:
-        self.processProgressPanel.mainloop()
+        self.processProgressPanel.pack(fill=tkinter.X,padx=10,pady=10)
 
 
 

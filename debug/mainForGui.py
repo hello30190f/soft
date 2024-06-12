@@ -10,7 +10,7 @@ from statusPanel import progressPanel
 from statusPanel import errCheckProgressPanel
 
 datas  = None
-winnerShown = False 
+winnerShown = False
 panel:progressPanel = None
 
 def errorMessage(text:str) -> None:
@@ -20,16 +20,21 @@ def errorMessage(text:str) -> None:
 def initMainFunc():
     global datas
     filePath = filedialog.askopenfilename()
-    
+
     errPanel = errCheckProgressPanel()
-    
-    with open(filePath,"r") as blob:
-        if(errCheckWithGui(blob,errPanel)):
-            errorMessage("error ocurred while read the file data. Please check your data file is correct.")
-            print("error ocurred while read the file data. Please check your data file is correct.")
-            exit(0)
-        print("des")
-        datas = data(blob)
+    errFlag = False
+    try:
+        with open(filePath,"r") as blob:
+            if(errCheckWithGui(blob,errPanel)):
+                errFlag = True
+            datas = data(blob)
+    except:
+        errFlag = True
+
+    if(errFlag):
+        errorMessage("error ocurred while read the file data. Please check your data file is correct.")
+        print("error ocurred while read the file data. Please check your data file is correct.")
+        exit(0)
 
 
 
@@ -55,6 +60,7 @@ if __name__ == "__main__":
     root = tkinter.Tk()
 
     root.title("Vote system")
+    root.geometry("400x250")
 
     commandList = tkinter.LabelFrame(root,text="command button")
     commandList.pack(padx=10,pady=10)

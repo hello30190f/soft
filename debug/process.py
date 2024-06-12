@@ -88,7 +88,6 @@ def process(data:data,statusPanel:progressPanel) -> str:
         print("progress: " + str(counter) + "\n\n")
         counter += 1
 
-    # statusPanel.processProgressPanel.destroy()
     return winner
 
 

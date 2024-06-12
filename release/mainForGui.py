@@ -8,13 +8,11 @@ import tkinter
 import threading
 from statusPanel import progressPanel
 from statusPanel import errCheckProgressPanel
+import sys
 
 datas  = None
 winnerShown = False
 panel:progressPanel = None
-
-def errorMessage(text:str) -> None:
-    messagebox.askokcancel(title="error",message=text)
 
 
 def initMainFunc():
@@ -24,18 +22,17 @@ def initMainFunc():
     errPanel = errCheckProgressPanel()
     errFlag = False
     try:
-        with open(filePath,"r") as blob:
-            if(errCheckWithGui(blob,errPanel)):
-                errFlag = True
-            datas = data(blob)
+        with open(filePath,"rt",encoding="UTF-8") as blob:
+            errFlag = errCheckWithGui(blob,errPanel)
+            if(not errFlag):
+                datas = data(blob)
     except:
+        errPanel.root.quit()
+        messagebox.askyesno("err occured","during opening the data file, err occured.")
         errFlag = True
 
     if(errFlag):
-        errorMessage("error ocurred while read the file data. Please check your data file is correct.")
-        print("error ocurred while read the file data. Please check your data file is correct.")
         exit(0)
-
 
 
 def getWinner(root:tkinter.Tk):

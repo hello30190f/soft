@@ -1,6 +1,7 @@
 import tkinter
 from data import *
 import threading
+from tkinter import messagebox
 
 
 
@@ -43,6 +44,11 @@ class errCheckProgressPanel:
     def hideCheckVoteDataInfo(self) -> None:
         self.checkVoteDataLabel.forget()
         self.checkVoteDataBar.forget()
+        
+    def showErrMessage(self):
+        text = "err occured in " + self.progressStatus["status"].get() +" err check process\n"
+        text += "Please check your data file is correct."
+        messagebox.askokcancel(title="error",message=text)
 
     def ProgressUpdate(self,mode:str,data:dict) -> None :
         if(mode == "wordCheck"):

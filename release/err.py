@@ -87,31 +87,47 @@ def checkVoteData(text:str,panel:errCheckProgressPanel) -> bool:
 
 def errCheckWithGui(blob:TextIOWrapper,panel:errCheckProgressPanel):
     # panel = errCheckProgressPanel()
-    check = threading.Thread(target=errCehck,args=(blob,panel))
+    status = {"status":"None","err":False}
+    check = threading.Thread(target=errCehck,args=(blob,panel,status))
     check.start()
     panel.ProgressShow()
-
+    return status["err"]
 
 # each error check should be separeted into function
 # and then executed as multiprocess
-def errCehck(blob:TextIOWrapper,panel:errCheckProgressPanel) -> bool:
+def errCehck(blob:TextIOWrapper,panel:errCheckProgressPanel,status:dict):
     text = blob.read()
 
     # check include "CANDIDATES" and "VOTES" value
-    if(wordCheck(text,panel)): return True
+    if(wordCheck(text,panel)): 
+        status["err"] = True
+        status["status"] = "wordCheck"
+        panel.showErrMessage()
+        panel.root.quit()
+        return
 
     # check unwanted char are included
         # check is there negative value
         # check format correctness
-    if(valueCheck(text,panel)): return True
+    if(valueCheck(text,panel)): 
+        status["err"] = True
+        status["status"] = "valueCheck"
+        panel.showErrMessage()
+        panel.root.quit()
+        return
 
     # check dupulicate data in vote data row
     # check are there alphabets in vote data row
-    if(checkVoteData(text,panel)): return True
+    if(checkVoteData(text,panel)): 
+        status["err"] = True
+        status["status"] = "checkVoteData"
+        panel.showErrMessage()
+        panel.root.quit()
+        return
 
     # check are there worng amount of data in vote date row
 
-
     blob.seek(0)
     panel.root.destroy()
+    status["status"] = "end"
     return False
